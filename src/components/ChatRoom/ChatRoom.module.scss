@@ -1,0 +1,42 @@
+$formHeight: 30px;
+$bottomPosFactor: 2.5vh;
+
+.ChatContainerWrapper{
+  background-color: #49515f;
+  width: 60vw;
+  height: 95vh;
+
+  .ChatForm {
+        position: fixed;
+        bottom: $bottomPosFactor;
+        width: 60vw;
+        padding: 0.5rem 0;
+        height: $formHeight;
+        overflow: hidden;
+        left: 22.5vw;
+        display: inline-flex;
+
+        input {
+            width: 85%;
+            padding: 5px;
+            border-radius: 10px;
+            outline: none;
+            border: none;
+
+        }
+
+        img {
+            display: inline;
+            height: 20px;
+            margin: 5px 10px ;
+        }
+    }
+
+    .MessageContainer {
+        position: fixed;
+        bottom: calc(#{$bottomPosFactor} + #{$formHeight} + 10px);
+        display: grid;
+        width: 60vw;
+        padding-bottom: 10px;
+    }
+}
