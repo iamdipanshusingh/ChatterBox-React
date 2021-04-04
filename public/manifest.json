@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Chatein",
+  "name": "Chatein - A messaging platform",
   "icons": [
     {
       "src": "favicon.ico",
