@@ -1,4 +1,5 @@
 import firebase from 'firebase/app';
+
 const { REACT_APP_API_KEY,
     REACT_APP_AUTH_DOMAIN,
     REACT_APP_PROJECT_ID,

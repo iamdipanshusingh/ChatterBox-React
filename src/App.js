@@ -9,7 +9,6 @@ import SignIn from './components/SignIn/SignIn';
 
 function App() {
   const auth = firebase.auth();
-
   const [user] = useAuthState(auth);
 
   return (
