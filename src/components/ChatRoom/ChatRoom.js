@@ -2,6 +2,8 @@ import { useCollectionData } from 'react-firebase-hooks/firestore';
 import Message from './Message/Message';
 import firebase from "../../firebase-config";
 import { useState } from 'react';
+import classes from "./ChatRoom.module.scss";
+import sendImage from '../../assets/icons/send.png';
 
 function ChatRoom(props) {
     const firestore = firebase.firestore();
@@ -13,15 +15,15 @@ function ChatRoom(props) {
 
     const [input, setInput] = useState('');
 
+    const auth = firebase.auth();
+    const { uid, photoURL } = auth.currentUser;
+
     const sendMessage = async (event) => {
         // prevents the default submit behaviour
         event.preventDefault();
 
-        const auth = firebase.auth();
+        setInput('');
 
-        const { uid, photoURL } = auth.currentUser;
-
-        
         // sends messsage
         await messageRef.add({
             text: input,
@@ -36,13 +38,15 @@ function ChatRoom(props) {
     }
 
     return (
-        <>
-            {messages ? messages.map(message => <Message message={message} />) : <p>So empty here</p>}
-            <form onSubmit={sendMessage}>
+        <div className={classes.ChatContainerWrapper}>
+            <div className={classes.MessageContainer}>
+                {messages ? messages.map(message => <Message message={message} sent={uid === message.uid} />) : <p>So empty here</p>}
+            </div>
+            <form className={classes.ChatForm} onSubmit={sendMessage}>
                 <input placeholder="Type here" value={input} onChange={(event) => inputHandler(event.target.value)} />
-                <button type="submit" >Send</button>
+                <img onClick={sendMessage} src={sendImage} alt="Send Button" />
             </form>
-        </>
+        </div>
     );
 }
 

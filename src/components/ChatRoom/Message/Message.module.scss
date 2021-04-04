@@ -1,0 +1,25 @@
+.MessageDiv {
+    display: flex;
+    font-size: 1.2rem;
+    align-items: center;
+    margin: 0 20px;
+
+    p {
+        display: inline;
+        margin: 2px 5px;
+        color: black;
+        background: #e5e5ea;
+        padding: 2px 8px;
+        border-radius: 10px;
+    }
+}
+
+.Sent {
+    flex-direction: row-reverse;
+    align-self: flex-end;
+
+    p {
+        color: white;
+        background: #10212e;
+    }
+}
