@@ -3,7 +3,7 @@ import firebase from 'firebase/app';
 
 function SignIn(props) {
     const onClick = () => {
-        const provider = new firebase.auth.GoogleAuthProvider();
+        const provider = new firebase.auth.PhoneAuthProvider();
         props.auth.signInWithPopup(provider);
     }
 
