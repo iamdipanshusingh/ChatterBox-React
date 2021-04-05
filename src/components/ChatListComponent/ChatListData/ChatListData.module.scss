@@ -1,0 +1,17 @@
+.ChatWrapper {
+    padding: 16px;
+
+    p {
+        margin: 0;
+        text-align: start;
+    }
+
+    .Title {
+        font-size: 1.1rem;
+    }
+
+    .Message {
+        font-size: 0.8rem;
+        font-weight: lighter;
+    }
+}
