@@ -40,7 +40,7 @@ function ChatRoom(props) {
     return (
         <div className={classes.ChatContainerWrapper}>
             <div className={classes.MessageContainer}>
-                {messages ? messages.map(message => <Message message={message} sent={uid === message.uid} />) : <p>So empty here</p>}
+                {messages ? messages.map(message => <Message key={message.id} message={message} sent={uid === message.uid} />) : <p>So empty here</p>}
             </div>
             <form className={classes.ChatForm} onSubmit={sendMessage}>
                 <input placeholder="Type here" value={input} onChange={(event) => inputHandler(event.target.value)} />
