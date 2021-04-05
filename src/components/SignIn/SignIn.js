@@ -8,10 +8,10 @@ function SignIn(props) {
             // create an instance of user
             // doing so, to find the users
             const firestore = firebase.firestore();
-            const messageRef = firestore.collection('users');
+            const usersRef = firestore.collection('users');
 
             const user = response.user;
-            messageRef.doc(user.email).set({
+            usersRef.doc(user.email).set({
                 name: user.displayName,
                 email: user.email,
                 phone: user.phoneNumber,
