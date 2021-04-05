@@ -2,31 +2,33 @@
 
 $formHeight: 30px;
 $bottomPosFactor: 2.5vh;
-$chatAreaWidth: 600px;
+$chatAreaWidth: 500px;
 $chatAreaWidthFixed: 400px;
+$widthFactor: 40px;
 
 .ChatContainerWrapper{
   background-color: #49515f;
   width: $chatAreaWidth;
   height: 95vh;
+  position: relative;
+  display: flex;
 
   @include media("<=1200px") {
       width: $chatAreaWidthFixed;
   }
 
   .ChatForm {
-        position: fixed;
+        position: absolute;
         bottom: $bottomPosFactor;
-        width: calc(#{$chatAreaWidth} - 5vw);
-        padding: 0.5rem 0;
+        width: $chatAreaWidth;
         height: $formHeight;
         overflow: hidden;
-        left: calc((100vw - #{$chatAreaWidth})/2 + 50px);
+        left: 8px;
         display: inline-flex;
+        justify-content: center;
 
         @include media("<=1200px") {
-            width: $chatAreaWidthFixed;
-            left: calc((100vw - #{$chatAreaWidthFixed})/2 + 12px);
+            width: calc(#{$chatAreaWidthFixed} - #{$widthFactor} + 35px);
         }
 
         input {
@@ -45,7 +47,7 @@ $chatAreaWidthFixed: 400px;
     }
 
     .MessageContainer {
-        position: fixed;
+        position: absolute;
         bottom: calc(#{$bottomPosFactor} + #{$formHeight} + 10px);
         display: grid;
         width: $chatAreaWidth;

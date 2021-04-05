@@ -4,7 +4,7 @@ import 'firebase/firestore';
 import 'firebase/auth';
 
 import { useAuthState } from 'react-firebase-hooks/auth';
-import ChatRoom from './components/ChatRoom/ChatRoom';
+import ChatRoomContainer from './container/ChatRoomContainer/ChatRoomContainer';
 import SignIn from './components/SignIn/SignIn';
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <section>
-          {user ? <ChatRoom /> : <SignIn auth={auth} />}
+          {user ? <ChatRoomContainer /> : <SignIn auth={auth} />}
         </section>
       </header>
     </div>
