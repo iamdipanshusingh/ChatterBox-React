@@ -1,20 +1,33 @@
+@import "node_modules/include-media/dist/include-media";
+
 $formHeight: 30px;
 $bottomPosFactor: 2.5vh;
+$chatAreaWidth: 600px;
+$chatAreaWidthFixed: 400px;
 
 .ChatContainerWrapper{
   background-color: #49515f;
-  width: 60vw;
+  width: $chatAreaWidth;
   height: 95vh;
+
+  @include media("<=1200px") {
+      width: $chatAreaWidthFixed;
+  }
 
   .ChatForm {
         position: fixed;
         bottom: $bottomPosFactor;
-        width: 60vw;
+        width: calc(#{$chatAreaWidth} - 5vw);
         padding: 0.5rem 0;
         height: $formHeight;
         overflow: hidden;
-        left: 22.5vw;
+        left: calc((100vw - #{$chatAreaWidth})/2 + 50px);
         display: inline-flex;
+
+        @include media("<=1200px") {
+            width: $chatAreaWidthFixed;
+            left: calc((100vw - #{$chatAreaWidthFixed})/2 + 12px);
+        }
 
         input {
             width: 85%;
@@ -22,7 +35,6 @@ $bottomPosFactor: 2.5vh;
             border-radius: 10px;
             outline: none;
             border: none;
-
         }
 
         img {
@@ -36,7 +48,11 @@ $bottomPosFactor: 2.5vh;
         position: fixed;
         bottom: calc(#{$bottomPosFactor} + #{$formHeight} + 10px);
         display: grid;
-        width: 60vw;
+        width: $chatAreaWidth;
         padding-bottom: 10px;
+
+        @include media("<=1200px") {
+            width: $chatAreaWidthFixed;
+        }
     }
 }

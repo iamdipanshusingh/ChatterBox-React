@@ -1,0 +1,25 @@
+.HeaderWrapper {
+    height: 50px;
+    width: 100%;
+    background: #1d2026;
+    text-align: start;
+    display: inline-flex;
+
+    .UserInfoDiv {
+        display: grid;
+        margin-left: 10px;
+        margin-top: 10px;
+
+        p {
+            display: inline;
+            margin: 0;
+            margin-bottom: -10px;
+            font-size: 1rem;
+            vertical-align: middle;
+        }
+
+        span {
+            font-size: 0.8rem;
+        }
+    }
+}
