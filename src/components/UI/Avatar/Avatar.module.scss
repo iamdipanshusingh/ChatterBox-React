@@ -1,0 +1,14 @@
+$imgSize: 35px;
+
+.AvatarWrapper {
+    display: inline-flex;
+    vertical-align: bottom;
+    margin-left: 15px;
+    margin-top: 8px;
+
+    img {
+        width: $imgSize;
+        height: $imgSize;
+        border-radius: 50%;
+    }
+}
