@@ -8,7 +8,7 @@ const messageHeader = props => {
         <div className={classes.HeaderWrapper}>
             <Avatar avatar={user.photoURL} />
             <div className={classes.UserInfoDiv}>
-                <p>{user.displayName}</p>
+                <p>{user.name}</p>
                 <span>last seen</span>
             </div>
         </div>
