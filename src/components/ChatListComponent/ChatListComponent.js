@@ -20,7 +20,6 @@ const ChatListComponent = props => {
         event.preventDefault();
 
         await getUsers();
-        // console.log({ users });
     }
 
     if (users) {
