@@ -25,11 +25,14 @@ function ChatRoom(props) {
         // prevents the default submit behaviour
         event.preventDefault();
 
+        const _input = input;
         setInput('');
+
+        if (_input.trim() === '') return;
 
         // sends messsage
         await messageRef.add({
-            text: input,
+            text: _input,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             uid,
             photoURL,
@@ -41,10 +44,10 @@ function ChatRoom(props) {
     }
 
     let selectedUser = useSelector(state => state.selectedUser);
-    
+
     return (
         <div className={classes.ChatContainerWrapper}>
-            {Object.keys(selectedUser).length > 0 && <MessageHeader user={selectedUser}/>}
+            {Object.keys(selectedUser).length > 0 && <MessageHeader user={selectedUser} />}
             <div className={classes.MessageContainer}>
                 {messages ? messages.map(message => <Message key={message.id} message={message} sent={uid === message.uid} />) : <p>So empty here</p>}
             </div>
