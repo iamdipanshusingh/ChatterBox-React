@@ -1,17 +1,24 @@
-.ChatWrapper {
+.OuterWrapper{
+    display: flex;
     padding: 16px;
 
-    p {
-        margin: 0;
-        text-align: start;
-    }
+    .ChatWrapper {
+        margin-left: 10px;
+        margin-top: 10px;
+        
 
-    .Title {
-        font-size: 1.1rem;
-    }
+        p {
+            margin: 0;
+            text-align: start;
+        }
 
-    .Message {
-        font-size: 0.8rem;
-        font-weight: lighter;
+        .Title {
+            font-size: 1.1rem;
+        }
+
+        .Message {
+            font-size: 0.8rem;
+            font-weight: lighter;
+        }
     }
 }
