@@ -1,11 +1,13 @@
 import classes from './SearchComponent.module.scss';
 
-const searchComponent = props => {
+const SearchComponent = props => {
     return (
         <div className={classes.SearchComponentWrapper}>
-            <input type="text" placeholder="Search"/>
+            <form onSubmit={props.onSearch}>
+                <input type="text" placeholder="Search" onChange={props.onChange} />
+            </form>
         </div>
     );
 }
 
-export default searchComponent;
+export default SearchComponent;
