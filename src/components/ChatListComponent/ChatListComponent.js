@@ -2,7 +2,7 @@ import classes from './ChatListComponent.module.scss';
 import SearchComponent from './SearchComponent/SearchComponent';
 import Divider from '@material-ui/core/Divider';
 import ChatListData from './ChatListData/ChatListData';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import firebase from '../../firebase-config';
 import { useDispatch } from 'react-redux';
 import * as actionTypes from '../../store/actions';
@@ -10,10 +10,27 @@ import * as actionTypes from '../../store/actions';
 const ChatListComponent = props => {
     const dispatch = useDispatch();
 
+    // states
     const [query, setQuery] = useState('');
     const [users, setUsers] = useState([]);
+    const [chats, setChats] = useState([]);
 
-    let chatDataComponent = null;
+    const firestore = firebase.firestore();
+
+    useEffect(async () => {
+        const chatsRef = firestore.collection('chats');
+        const snapshot = await chatsRef.get();
+
+        const chats = [];
+        snapshot.docs.map(doc => {
+            const chat = doc.data();
+            chats.push(chat);
+        });
+
+        setChats(chats);
+        setUsers([]);
+    }, []);
+
 
     const inputHandler = (value) => {
         setQuery(value);
@@ -32,17 +49,25 @@ const ChatListComponent = props => {
         });
     }
 
-    if (users) {
-        chatDataComponent = users.map(user =>
-            <div key={user.name} className={classes.ChatWrapper}>
-                <ChatListData onClick={() => selectUser(user)} user={user} />
+    let chatDataComponent = null;
+    if (users || chats) {
+        if (chats.length > 0)
+            const { users } = chats;
+
+        const currentUser = useSelector(state => state.currentUser);
+
+        /// this is only valid for single type chats
+        const recieverUser = users.find(user => user.uid !== currentUser.uid);
+
+        chatDataComponent = chats.map(chat =>
+            <div key={chat.id} className={classes.ChatWrapper}>
+                <ChatListData onClick={() => selectUser(user)} user={recieverUser} />
                 <Divider variant='middle' />
             </div>
         );
     }
 
     const getUsers = async () => {
-        const firestore = firebase.firestore();
         const usersRef = firestore.collection('users');
         const snapshot = await usersRef.get();
 
@@ -55,6 +80,7 @@ const ChatListComponent = props => {
             }
         });
         setUsers(users);
+        setChats([]);
     }
 
     return (

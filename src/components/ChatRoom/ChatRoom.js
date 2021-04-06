@@ -1,11 +1,11 @@
 import { useCollectionData } from 'react-firebase-hooks/firestore';
-import Message from './Message/Message';
 import firebase from "../../firebase-config";
 import { useState } from 'react';
 import classes from "./ChatRoom.module.scss";
 import sendImage from '../../assets/icons/send.png';
 import MessageHeader from './Message/MessageHeader/MessageHeader';
 import { useSelector } from 'react-redux';
+import MessageContainer from './Message/MessageContainer/MessageContainer';
 
 function ChatRoom(props) {
     const firestore = firebase.firestore();
@@ -48,9 +48,7 @@ function ChatRoom(props) {
     return (
         <div className={classes.ChatContainerWrapper}>
             {Object.keys(selectedUser).length > 0 && <MessageHeader user={selectedUser} />}
-            <div className={classes.MessageContainer}>
-                {messages ? messages.map(message => <Message key={message.id} message={message} sent={uid === message.uid} />) : <p>So empty here</p>}
-            </div>
+            <MessageContainer classes={classes.MessageContainer} messages={messages} uid={uid}/>
             <form className={classes.ChatForm} onSubmit={sendMessage}>
                 <input placeholder="Type here" value={input} onChange={(event) => inputHandler(event.target.value)} />
                 <img onClick={sendMessage} src={sendImage} alt="Send Button" />
