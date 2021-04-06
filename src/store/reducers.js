@@ -1,7 +1,8 @@
 import * as actionTypes from './actions';
 
 const initialState = {
-    users: []
+    users: [],
+    selectedUser: {}
 };
 
 const reducer = (state = initialState, action) => {
@@ -11,6 +12,12 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 users: action.users,
             };
+
+        case actionTypes.SET_SELECTED_USER:
+            return {
+                ...state,
+                selectedUser: action.selectedUser
+            }
     }
 
     return state;

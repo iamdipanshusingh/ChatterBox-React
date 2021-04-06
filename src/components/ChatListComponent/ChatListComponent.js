@@ -2,11 +2,14 @@ import classes from './ChatListComponent.module.scss';
 import SearchComponent from './SearchComponent/SearchComponent';
 import Divider from '@material-ui/core/Divider';
 import ChatListData from './ChatListData/ChatListData';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import firebase from '../../firebase-config';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
+import { useDispatch } from 'react-redux';
+import * as actionTypes from '../../store/actions';
 
 const ChatListComponent = props => {
+    const dispatch = useDispatch();
+
     const [query, setQuery] = useState('');
     const [users, setUsers] = useState([]);
 
@@ -22,10 +25,17 @@ const ChatListComponent = props => {
         await getUsers();
     }
 
+    const selectUser = (user) => {
+        dispatch({
+            type: actionTypes.SET_SELECTED_USER,
+            selectedUser: user
+        });
+    }
+
     if (users) {
         chatDataComponent = users.map(user =>
             <div key={user.name} className={classes.ChatWrapper}>
-                <ChatListData user={user} />
+                <ChatListData onClick={() => selectUser(user)} user={user} />
                 <Divider variant='middle' />
             </div>
         );

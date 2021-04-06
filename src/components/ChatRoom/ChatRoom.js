@@ -5,6 +5,7 @@ import { useState } from 'react';
 import classes from "./ChatRoom.module.scss";
 import sendImage from '../../assets/icons/send.png';
 import MessageHeader from './Message/MessageHeader/MessageHeader';
+import { useSelector } from 'react-redux';
 
 function ChatRoom(props) {
     const firestore = firebase.firestore();
@@ -39,9 +40,11 @@ function ChatRoom(props) {
         setInput(value);
     }
 
+    let selectedUser = useSelector(state => state.selectedUser);
+    
     return (
         <div className={classes.ChatContainerWrapper}>
-            <MessageHeader user={user}/>
+            {Object.keys(selectedUser).length > 0 && <MessageHeader user={selectedUser}/>}
             <div className={classes.MessageContainer}>
                 {messages ? messages.map(message => <Message key={message.id} message={message} sent={uid === message.uid} />) : <p>So empty here</p>}
             </div>
