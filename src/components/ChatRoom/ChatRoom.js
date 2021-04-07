@@ -1,6 +1,6 @@
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import firebase from "../../firebase-config";
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classes from "./ChatRoom.module.scss";
 import sendImage from '../../assets/icons/send.png';
 import MessageHeader from './Message/MessageHeader/MessageHeader';
@@ -47,12 +47,16 @@ function ChatRoom(props) {
 
     return (
         <div className={classes.ChatContainerWrapper}>
-            {Object.keys(selectedUser).length > 0 && <MessageHeader user={selectedUser} />}
-            <MessageContainer classes={classes.MessageContainer} messages={messages} uid={uid}/>
-            <form className={classes.ChatForm} onSubmit={sendMessage}>
-                <input placeholder="Type here" value={input} onChange={(event) => inputHandler(event.target.value)} />
-                <img onClick={sendMessage} src={sendImage} alt="Send Button" />
-            </form>
+            {Object.keys(selectedUser).length > 0 &&
+                <React.Fragment>
+                    <MessageHeader user={selectedUser} />
+                    <MessageContainer classes={classes.MessageContainer} messages={messages} uid={uid} />
+                    <form className={classes.ChatForm} onSubmit={sendMessage}>
+                        <input placeholder="Type here" value={input} onChange={(event) => inputHandler(event.target.value)} />
+                        <img onClick={sendMessage} src={sendImage} alt="Send Button" />
+                    </form>
+                </React.Fragment>
+            }
         </div>
     );
 }
