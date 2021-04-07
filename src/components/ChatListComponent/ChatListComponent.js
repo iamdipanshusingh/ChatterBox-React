@@ -12,7 +12,6 @@ const ChatListComponent = props => {
 
     // states
     const [query, setQuery] = useState('');
-    const [users, setUsers] = useState([]);
     const [chats, setChats] = useState([]);
 
     const firestore = firebase.firestore();
@@ -27,9 +26,7 @@ const ChatListComponent = props => {
         }));
 
         if (chats && chats.length > 0)
-                setChats([...chats]);
-
-            setUsers([]);
+            setChats([...chats]);
     }, []);
 
 
@@ -55,13 +52,10 @@ const ChatListComponent = props => {
     const auth = firebase.auth();
     const currentUser = auth.currentUser;
 
-    if ((users && users.length > 0) || (chats && chats.length > 0)) {
-        if (chats && chats.length > 0)
-            setUsers(chats.users);
-
-        chatDataComponent = users.map(user =>
-            <div key={user.id} className={classes.ChatWrapper}>
-                <ChatListData onClick={() => selectUser(user)} user={user} />
+    if (chats && chats.length > 0) {
+        chatDataComponent = chats.map(chat =>
+            <div key={chat.receiver.id} className={classes.ChatWrapper}>
+                <ChatListData onClick={() => selectUser(chat.receiver)} user={chat.receiver } />
                 <Divider variant='middle' />
             </div>
         );
@@ -81,15 +75,20 @@ const ChatListComponent = props => {
                 users.push(user);
             }
         });
-        if (users)
-            setUsers([...users]);
+        if (users) {
+            const chats = users.map(user => {
+                return {
+                    receiver: user
+                };
+            });
 
-        setChats([]);
+            setChats(chats);
+        }
     }
 
     return (
         <div className={classes.ChatListWrapper}>
-            <SearchComponent onChange={(e) => inputHandler(e.target.value)} onSearch={searchUser} />
+            <SearchComponent onChange={(e) => inputHandler(e.target.value)} onSearch={searchUser} value={query} />
             <Divider variant='middle' />
 
             {chatDataComponent}
