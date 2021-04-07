@@ -4,7 +4,7 @@ import Divider from '@material-ui/core/Divider';
 import ChatListData from './ChatListData/ChatListData';
 import { useEffect, useState } from 'react';
 import firebase from '../../firebase-config';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as actionTypes from '../../store/actions';
 
 const ChatListComponent = props => {
@@ -17,18 +17,19 @@ const ChatListComponent = props => {
 
     const firestore = firebase.firestore();
 
-    useEffect(async () => {
+    useEffect(() => {
         const chatsRef = firestore.collection('chats');
-        const snapshot = await chatsRef.get();
 
         const chats = [];
-        snapshot.docs.map(doc => {
+        chatsRef.get().then(snapshot => snapshot.docs.map(doc => {
             const chat = doc.data();
             chats.push(chat);
-        });
+        }));
 
-        setChats(chats);
-        setUsers([]);
+        if (chats && chats.length > 0)
+                setChats([...chats]);
+
+            setUsers([]);
     }, []);
 
 
@@ -50,18 +51,19 @@ const ChatListComponent = props => {
     }
 
     let chatDataComponent = null;
-    if (users || chats) {
-        if (chats.length > 0)
-            const { users } = chats;
 
-        const currentUser = useSelector(state => state.currentUser);
+    const currentUser = useSelector(state => state.currentUser);
+
+    if ((users && users.length > 0) || (chats && chats.length > 0)) {
+        if (chats && chats.length > 0)
+            setUsers(chats.users);
 
         /// this is only valid for single type chats
-        const recieverUser = users.find(user => user.uid !== currentUser.uid);
+        const recieverUser = users?.find(user => user.uid !== currentUser.uid);
 
         chatDataComponent = chats.map(chat =>
             <div key={chat.id} className={classes.ChatWrapper}>
-                <ChatListData onClick={() => selectUser(user)} user={recieverUser} />
+                <ChatListData onClick={() => selectUser(recieverUser)} user={recieverUser} />
                 <Divider variant='middle' />
             </div>
         );
@@ -79,7 +81,9 @@ const ChatListComponent = props => {
                 users.push(user);
             }
         });
-        setUsers(users);
+        if (users)
+            setUsers([...users]);
+
         setChats([]);
     }
 
