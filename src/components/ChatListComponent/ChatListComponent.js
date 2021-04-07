@@ -52,7 +52,8 @@ const ChatListComponent = props => {
 
     let chatDataComponent = null;
 
-    const currentUser = useSelector(state => state.currentUser);
+    const auth = firebase.auth();
+    const currentUser = auth.currentUser;
 
     if ((users && users.length > 0) || (chats && chats.length > 0)) {
         if (chats && chats.length > 0)

@@ -23,12 +23,7 @@ function SignIn(props) {
                 photoURL: user.photoURL
             };
 
-            dispatch({
-                type: actionTypes.SET_CURRENT_USER,
-                currentUser: _user
-            })
-
-            usersRef.doc(user.email).set(_user)
+            usersRef.doc(user.email).set(_user);
         });
     }
 
