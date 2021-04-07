@@ -4,16 +4,21 @@ import React, { useEffect, useState } from 'react';
 import classes from "./ChatRoom.module.scss";
 import sendImage from '../../assets/icons/send.png';
 import MessageHeader from './Message/MessageHeader/MessageHeader';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import MessageContainer from './Message/MessageContainer/MessageContainer';
+import * as actionTypes from '../../store/actions';
 
 function ChatRoom(props) {
+    const dispatch = useDispatch();
+
+    /// firestore instance for fetching/posting the collection data
     const firestore = firebase.firestore();
 
-    const messageRef = firestore.collection('messages');
-    const query = messageRef.orderBy('createdAt').limit(25);
+    /// ref. to chats
+    /// use this to fetch and create new chats
+    const chatsRef = firestore.collection('chats');
 
-    const [messages] = useCollectionData(query, { idField: 'id' });
+    let selectedChat = useSelector(state => state.selectedChat);
 
     const [input, setInput] = useState('');
 
@@ -21,6 +26,31 @@ function ChatRoom(props) {
     const user = auth.currentUser;
     const { uid, photoURL } = user;
 
+    /// fetch chats once the ChatRoom is loaded
+    useEffect(() => {
+        fetchChats();
+    }, []);
+
+    /// fetch chats collection from firebase
+    const fetchChats = async () => {
+        const chatsSnapshot = await chatsRef.get();
+
+        const chats = [];
+        chatsSnapshot.docs.map(doc => {
+            const chat = doc.data();
+
+            chats.push(chat);
+        });
+
+        console.log(chats);
+
+        dispatch({
+            type: actionTypes.SET_CHATS,
+            chats
+        })
+    }
+
+    /// send the message
     const sendMessage = async (event) => {
         // prevents the default submit behaviour
         event.preventDefault();
@@ -30,8 +60,21 @@ function ChatRoom(props) {
 
         if (_input.trim() === '') return;
 
-        // sends messsage
-        await messageRef.add({
+        await chatsRef.doc('123123').set({
+            users: [
+                selectedChat.receiver,
+                {
+                    uid: user.uid,
+                    name: user.displayName,
+                    phone: user.phoneNumber,
+                    email: user.email,
+                    photoURL: user.photoURL
+                }
+            ],
+            type: 'single',
+        });
+        
+        await chatsRef.doc('123123').collection('messages').doc().set({
             text: _input,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             uid,
@@ -43,14 +86,12 @@ function ChatRoom(props) {
         setInput(value);
     }
 
-    let selectedUser = useSelector(state => state.selectedUser);
-
     return (
         <div className={classes.ChatContainerWrapper}>
-            {Object.keys(selectedUser).length > 0 &&
+            {Object.keys(selectedChat).length > 0 &&
                 <React.Fragment>
-                    <MessageHeader user={selectedUser} />
-                    <MessageContainer classes={classes.MessageContainer} messages={messages} uid={uid} />
+                    <MessageHeader user={selectedChat.receiver} />
+                    <MessageContainer classes={classes.MessageContainer} /* messages={messages} */ uid={uid} />
                     <form className={classes.ChatForm} onSubmit={sendMessage}>
                         <input placeholder="Type here" value={input} onChange={(event) => inputHandler(event.target.value)} />
                         <img onClick={sendMessage} src={sendImage} alt="Send Button" />

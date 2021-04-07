@@ -12,23 +12,8 @@ const ChatListComponent = props => {
 
     // states
     const [query, setQuery] = useState('');
-    const [chats, setChats] = useState([]);
 
     const firestore = firebase.firestore();
-
-    useEffect(() => {
-        const chatsRef = firestore.collection('chats');
-
-        const chats = [];
-        chatsRef.get().then(snapshot => snapshot.docs.map(doc => {
-            const chat = doc.data();
-            chats.push(chat);
-        }));
-
-        if (chats && chats.length > 0)
-            setChats([...chats]);
-    }, []);
-
 
     const inputHandler = (value) => {
         setQuery(value);
@@ -40,10 +25,10 @@ const ChatListComponent = props => {
         await getUsers();
     }
 
-    const selectUser = (user) => {
+    const selectChat = (chat) => {
         dispatch({
-            type: actionTypes.SET_SELECTED_USER,
-            selectedUser: user
+            type: actionTypes.SELECT_CHAT,
+            selectedChat: chat
         });
     }
 
@@ -52,10 +37,11 @@ const ChatListComponent = props => {
     const auth = firebase.auth();
     const currentUser = auth.currentUser;
 
+    const chats = useSelector(state => state.chats);
     if (chats && chats.length > 0) {
         chatDataComponent = chats.map(chat =>
-            <div key={chat.receiver.id} className={classes.ChatWrapper}>
-                <ChatListData onClick={() => selectUser(chat.receiver)} user={chat.receiver } />
+            <div className={classes.ChatWrapper}>
+                <ChatListData onClick={() => selectChat(chat)} user={chat.receiver } />
                 <Divider variant='middle' />
             </div>
         );
@@ -82,7 +68,10 @@ const ChatListComponent = props => {
                 };
             });
 
-            setChats(chats);
+            dispatch({
+                type: actionTypes.SET_CHATS,
+                chats: chats
+            });
         }
     }
 
