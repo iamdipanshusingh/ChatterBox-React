@@ -58,12 +58,9 @@ const ChatListComponent = props => {
         if (chats && chats.length > 0)
             setUsers(chats.users);
 
-        /// this is only valid for single type chats
-        const recieverUser = users?.find(user => user.uid !== currentUser.uid);
-
-        chatDataComponent = chats.map(chat =>
-            <div key={chat.id} className={classes.ChatWrapper}>
-                <ChatListData onClick={() => selectUser(recieverUser)} user={recieverUser} />
+        chatDataComponent = users.map(user =>
+            <div key={user.id} className={classes.ChatWrapper}>
+                <ChatListData onClick={() => selectUser(user)} user={user} />
                 <Divider variant='middle' />
             </div>
         );
@@ -77,7 +74,9 @@ const ChatListComponent = props => {
         snapshot.docs.map(doc => {
             const user = doc.data();
 
-            if (user.name.toLowerCase().includes(query)) {
+            /// the user won't be able to search themselves
+            /// remove the uid check if this is to be allowed
+            if (currentUser.uid !== user.uid && user.name.toLowerCase().includes(query)) {
                 users.push(user);
             }
         });
