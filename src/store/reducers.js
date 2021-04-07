@@ -23,11 +23,11 @@ const reducer = (state = initialState, action) => {
         case actionTypes.SET_CHATS:
             return {
                 ...state,
-                chats: action.chats
+                chats: [...action.chats]
             }
+        default:
+            return state;
     }
-
-    return state;
 };
 
 export default reducer;

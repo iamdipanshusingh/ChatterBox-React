@@ -1,4 +1,3 @@
-import { useCollectionData } from 'react-firebase-hooks/firestore';
 import firebase from "../../firebase-config";
 import React, { useEffect, useState } from 'react';
 import classes from "./ChatRoom.module.scss";
@@ -28,27 +27,49 @@ function ChatRoom(props) {
 
     /// fetch chats once the ChatRoom is loaded
     useEffect(() => {
-        fetchChats();
-    }, []);
+        const fetchMessages = async () => {
+            const messagesSnapshot = await chatsRef.doc('123123').collection('messages').get();
 
-    /// fetch chats collection from firebase
-    const fetchChats = async () => {
-        const chatsSnapshot = await chatsRef.get();
+            const messages = [];
+            messagesSnapshot.docs.map(doc => {
+                const message = doc.data();
+                messages.push(message);
+                return null;
+            });
+            return messages;
+        }
 
-        const chats = [];
-        chatsSnapshot.docs.map(doc => {
-            const chat = doc.data();
+        /// fetch chats collection from firebase
+        const fetchChats = async () => {
+            const chatsSnapshot = await chatsRef.get();
 
-            chats.push(chat);
+            const chats = [];
+            Promise.all(
+                chatsSnapshot.docs.map(async (doc) => {
+                    console.log({ doc });
+                    let chat = doc.data();
+
+                    const { users } = chat;
+
+                    const messages = await fetchMessages();
+
+                    const receiver = users.find(_user => _user.uid !== user.uid);
+                    chat = { ...chat, receiver, messages };
+
+                    chats.push(chat);
+                })
+            );
+            return chats;
+        }
+
+        fetchChats().then(chats => {
+            if (chats.length)
+                dispatch({
+                    type: actionTypes.SET_CHATS,
+                    chats: chats
+                });
         });
-
-        console.log(chats);
-
-        dispatch({
-            type: actionTypes.SET_CHATS,
-            chats
-        })
-    }
+    }, [chatsRef, dispatch, user.uid]);
 
     /// send the message
     const sendMessage = async (event) => {
@@ -73,7 +94,7 @@ function ChatRoom(props) {
             ],
             type: 'single',
         });
-        
+
         await chatsRef.doc('123123').collection('messages').doc().set({
             text: _input,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -91,7 +112,7 @@ function ChatRoom(props) {
             {Object.keys(selectedChat).length > 0 &&
                 <React.Fragment>
                     <MessageHeader user={selectedChat.receiver} />
-                    <MessageContainer classes={classes.MessageContainer} /* messages={messages} */ uid={uid} />
+                    <MessageContainer classes={classes.MessageContainer} messages={selectedChat.messages} uid={uid} />
                     <form className={classes.ChatForm} onSubmit={sendMessage}>
                         <input placeholder="Type here" value={input} onChange={(event) => inputHandler(event.target.value)} />
                         <img onClick={sendMessage} src={sendImage} alt="Send Button" />
