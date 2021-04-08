@@ -25,7 +25,23 @@ const ChatListComponent = props => {
         await getUsers();
     }
 
-    const selectChat = (chat) => {
+    const fetchMessages = async (id) => {
+        const chatsRef = firestore.collection('chats');
+        const messagesSnapshot = await chatsRef.doc(id).collection('messages').get();
+
+        const messages = [];
+        messagesSnapshot.docs.map(doc => {
+            const message = doc.data();
+            messages.push(message);
+            return null;
+        });
+        return messages;
+    }
+
+    const selectChat = async (chat) => {
+        const messages = await fetchMessages(chat.id);
+        chat = {...chat, messages};
+        
         dispatch({
             type: actionTypes.SELECT_CHAT,
             selectedChat: chat

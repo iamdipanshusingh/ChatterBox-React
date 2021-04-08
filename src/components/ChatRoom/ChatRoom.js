@@ -27,36 +27,23 @@ function ChatRoom(props) {
 
     /// fetch chats once the ChatRoom is loaded
     useEffect(() => {
-        const fetchMessages = async () => {
-            const messagesSnapshot = await chatsRef.doc('123123').collection('messages').get();
-
-            const messages = [];
-            messagesSnapshot.docs.map(doc => {
-                const message = doc.data();
-                messages.push(message);
-                return null;
-            });
-            return messages;
-        }
-
         /// fetch chats collection from firebase
         const fetchChats = async () => {
             const chatsSnapshot = await chatsRef.get();
 
             const chats = [];
             Promise.all(
-                chatsSnapshot.docs.map(async (doc) => {
+                chatsSnapshot.docs.map((doc) => {
                     console.log({ doc });
                     let chat = doc.data();
 
                     const { users } = chat;
 
-                    const messages = await fetchMessages();
-
                     const receiver = users.find(_user => _user.uid !== user.uid);
-                    chat = { ...chat, receiver, messages };
+                    chat = { ...chat, id: doc.id, receiver };
 
                     chats.push(chat);
+                    return null;
                 })
             );
             return chats;
@@ -81,26 +68,35 @@ function ChatRoom(props) {
 
         if (_input.trim() === '') return;
 
-        await chatsRef.doc('123123').set({
-            users: [
-                selectedChat.receiver,
-                {
-                    uid: user.uid,
-                    name: user.displayName,
-                    phone: user.phoneNumber,
-                    email: user.email,
-                    photoURL: user.photoURL
-                }
-            ],
-            type: 'single',
-        });
+        const postChat = async (id) => {
+            await chatsRef.doc(id).collection('messages').doc().set({
+                text: _input,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                uid,
+                photoURL,
+                chatId: id,
+            });
+        }
 
-        await chatsRef.doc('123123').collection('messages').doc().set({
-            text: _input,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            uid,
-            photoURL,
-        });
+        if (selectedChat.id) {
+            postChat(selectedChat.id);
+        } else {
+            await chatsRef.add({
+                users: [
+                    selectedChat.receiver,
+                    {
+                        uid: user.uid,
+                        name: user.displayName,
+                        phone: user.phoneNumber,
+                        email: user.email,
+                        photoURL: user.photoURL
+                    }
+                ],
+                type: 'single',
+            }).then(response => {
+                postChat(response.id);
+            });
+        }
     }
 
     const inputHandler = (value) => {
