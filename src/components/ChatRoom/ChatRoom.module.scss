@@ -5,11 +5,12 @@ $bottomPosFactor: 2.5vh;
 $chatAreaWidth: 500px;
 $chatAreaWidthFixed: 400px;
 $widthFactor: 40px;
+$containerWrapperHeight: 95vh;
 
 .ChatContainerWrapper{
   background-color: #49515f;
   width: $chatAreaWidth;
-  height: 95vh;
+  height: $containerWrapperHeight;
   position: relative;
   display: flex;
 
@@ -52,6 +53,9 @@ $widthFactor: 40px;
         display: grid;
         width: $chatAreaWidth;
         padding-bottom: 10px;
+
+        height: calc(#{$containerWrapperHeight} - 50px - #{$formHeight} - 50px);
+        overflow-y: auto;
 
         @include media("<=1200px") {
             width: $chatAreaWidthFixed;

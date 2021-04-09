@@ -1,4 +1,4 @@
-import './App.css';
+import './App.scss';
 import firebase from './firebase-config';
 import 'firebase/firestore';
 import 'firebase/auth';
