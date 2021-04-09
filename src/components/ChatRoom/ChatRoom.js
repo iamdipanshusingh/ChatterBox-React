@@ -6,6 +6,7 @@ import MessageHeader from './Message/MessageHeader/MessageHeader';
 import { useDispatch, useSelector } from 'react-redux';
 import MessageContainer from './Message/MessageContainer/MessageContainer';
 import * as actionTypes from '../../store/actions';
+import {useCollectionData} from 'react-firebase-hooks/firestore';
 
 function ChatRoom(props) {
     const dispatch = useDispatch();
@@ -58,6 +59,11 @@ function ChatRoom(props) {
         });
     }, [chatsRef, dispatch, user.uid]);
 
+    const messagesRef = chatsRef.doc(selectedChat.id).collection('messages');
+
+    const query = messagesRef.orderBy('createdAt');
+    const [messages] = useCollectionData(query);
+    
     /// send the message
     const sendMessage = async (event) => {
         // prevents the default submit behaviour
@@ -68,17 +74,17 @@ function ChatRoom(props) {
 
         if (_input.trim() === '') return;
 
-        const postChat = async (id) => {
-            await chatsRef.doc(id).collection('messages').doc().set({
+        const postChat = async () => {
+            await messagesRef.add({
                 text: _input,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 uid,
                 photoURL,
-                chatId: id,
+                chatId: selectedChat.id,
             });
         }
 
-        postChat(selectedChat.id);
+        postChat();
     }
 
     const inputHandler = (value) => {
@@ -90,7 +96,7 @@ function ChatRoom(props) {
             {Object.keys(selectedChat).length > 0 &&
                 <React.Fragment>
                     <MessageHeader user={selectedChat.receiver} />
-                    <MessageContainer classes={classes.MessageContainer} messages={selectedChat.messages} uid={uid} />
+                    <MessageContainer classes={classes.MessageContainer} messages={messages} uid={uid} />
                     <form className={classes.ChatForm} onSubmit={sendMessage}>
                         <input placeholder="Type here" value={input} onChange={(event) => inputHandler(event.target.value)} />
                         <img onClick={sendMessage} src={sendImage} alt="Send Button" />

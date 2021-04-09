@@ -6,7 +6,6 @@ import { useState } from 'react';
 import firebase from '../../firebase-config';
 import { useDispatch, useSelector } from 'react-redux';
 import * as actionTypes from '../../store/actions';
-import { fetchMessages } from '../../utils/utils';
 
 const ChatListComponent = props => {
     const dispatch = useDispatch();
@@ -28,14 +27,13 @@ const ChatListComponent = props => {
 
     const auth = firebase.auth();
     const user = auth.currentUser;
-    
+
     const selectChat = async (chat) => {
-        console.log({chat});
-        
+        console.log({ chat });
+
         if (chat.id) {
-            const messages = await fetchMessages(chat.id);
-            chat = { ...chat, id: chat.id, messages };
-    
+            chat = { ...chat, id: chat.id };
+
             dispatch({
                 type: actionTypes.SELECT_CHAT,
                 selectedChat: chat
@@ -54,10 +52,8 @@ const ChatListComponent = props => {
                     }
                 ],
                 type: 'single',
-            }).then(async response => {
-                const messages = await fetchMessages(response.id);
-                
-                const _selectedChat = {...chat, id: chat.id, messages}
+            }).then(response => {
+                const _selectedChat = { ...chat, id: response.id }
                 dispatch({
                     type: actionTypes.SELECT_CHAT,
                     selectedChat: _selectedChat
