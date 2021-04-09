@@ -6,6 +6,7 @@ import { useState } from 'react';
 import firebase from '../../firebase-config';
 import { useDispatch, useSelector } from 'react-redux';
 import * as actionTypes from '../../store/actions';
+import { fetchMessages } from '../../utils/utils';
 
 const ChatListComponent = props => {
     const dispatch = useDispatch();
@@ -25,31 +26,45 @@ const ChatListComponent = props => {
         await getUsers();
     }
 
-    const fetchMessages = async (id) => {
-        const chatsRef = firestore.collection('chats');
-        const messagesSnapshot = await chatsRef.doc(id).collection('messages').get();
-
-        const messages = [];
-        messagesSnapshot.docs.map(doc => {
-            const message = doc.data();
-            messages.push(message);
-            return null;
-        });
-        return messages;
-    }
-
-    const selectChat = async (chat) => {
-        const messages = await fetchMessages(chat.id);
-        chat = {...chat, messages};
-        
-        dispatch({
-            type: actionTypes.SELECT_CHAT,
-            selectedChat: chat
-        });
-    }
-
     const auth = firebase.auth();
-    const currentUser = auth.currentUser;
+    const user = auth.currentUser;
+    
+    const selectChat = async (chat) => {
+        console.log({chat});
+        
+        if (chat.id) {
+            const messages = await fetchMessages(chat.id);
+            chat = { ...chat, id: chat.id, messages };
+    
+            dispatch({
+                type: actionTypes.SELECT_CHAT,
+                selectedChat: chat
+            });
+        } else {
+            const chatsRef = firestore.collection('chats');
+            await chatsRef.add({
+                users: [
+                    chat.receiver,
+                    {
+                        uid: user.uid,
+                        name: user.displayName,
+                        phone: user.phoneNumber,
+                        email: user.email,
+                        photoURL: user.photoURL
+                    }
+                ],
+                type: 'single',
+            }).then(async response => {
+                const messages = await fetchMessages(response.id);
+                
+                const _selectedChat = {...chat, id: chat.id, messages}
+                dispatch({
+                    type: actionTypes.SELECT_CHAT,
+                    selectedChat: _selectedChat
+                });
+            });
+        }
+    }
 
     const getUsers = async () => {
         const usersRef = firestore.collection('users');
@@ -57,12 +72,12 @@ const ChatListComponent = props => {
 
         let users = [];
         snapshot.docs.map(doc => {
-            const user = doc.data();
+            const _user = doc.data();
 
             /// the user won't be able to search themselves
             /// remove the uid check if this is to be allowed
-            if (currentUser.uid !== user.uid && user.name.toLowerCase().includes(query)) {
-                users.push(user);
+            if (user.uid !== _user.uid && _user.name.toLowerCase().includes(query)) {
+                users.push(_user);
             }
             return null;
         });

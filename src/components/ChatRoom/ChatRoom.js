@@ -78,25 +78,7 @@ function ChatRoom(props) {
             });
         }
 
-        if (selectedChat.id) {
-            postChat(selectedChat.id);
-        } else {
-            await chatsRef.add({
-                users: [
-                    selectedChat.receiver,
-                    {
-                        uid: user.uid,
-                        name: user.displayName,
-                        phone: user.phoneNumber,
-                        email: user.email,
-                        photoURL: user.photoURL
-                    }
-                ],
-                type: 'single',
-            }).then(response => {
-                postChat(response.id);
-            });
-        }
+        postChat(selectedChat.id);
     }
 
     const inputHandler = (value) => {
