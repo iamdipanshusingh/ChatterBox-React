@@ -5,7 +5,7 @@ const ChatListData = props => {
     const { user } = props;
 
     console.log({props});
-
+    
     return (
         <div onClick={props.onClick} className={classes.OuterWrapper}>
             <Avatar avatar={user?.photoURL} />

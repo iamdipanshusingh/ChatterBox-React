@@ -2,7 +2,7 @@ import classes from './ChatListComponent.module.scss';
 import SearchComponent from './SearchComponent/SearchComponent';
 import Divider from '@material-ui/core/Divider';
 import ChatListData from './ChatListData/ChatListData';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import firebase from '../../firebase-config';
 import { useDispatch, useSelector } from 'react-redux';
 import * as actionTypes from '../../store/actions';
@@ -12,23 +12,8 @@ const ChatListComponent = props => {
 
     // states
     const [query, setQuery] = useState('');
-    const [chats, setChats] = useState([]);
 
     const firestore = firebase.firestore();
-
-    useEffect(() => {
-        const chatsRef = firestore.collection('chats');
-
-        const chats = [];
-        chatsRef.get().then(snapshot => snapshot.docs.map(doc => {
-            const chat = doc.data();
-            chats.push(chat);
-        }));
-
-        if (chats && chats.length > 0)
-            setChats([...chats]);
-    }, []);
-
 
     const inputHandler = (value) => {
         setQuery(value);
@@ -40,25 +25,41 @@ const ChatListComponent = props => {
         await getUsers();
     }
 
-    const selectUser = (user) => {
-        dispatch({
-            type: actionTypes.SET_SELECTED_USER,
-            selectedUser: user
-        });
-    }
-
-    let chatDataComponent = null;
-
     const auth = firebase.auth();
-    const currentUser = auth.currentUser;
+    const user = auth.currentUser;
 
-    if (chats && chats.length > 0) {
-        chatDataComponent = chats.map(chat =>
-            <div key={chat.receiver.id} className={classes.ChatWrapper}>
-                <ChatListData onClick={() => selectUser(chat.receiver)} user={chat.receiver } />
-                <Divider variant='middle' />
-            </div>
-        );
+    const selectChat = async (chat) => {
+        console.log({ chat });
+
+        if (chat.id) {
+            chat = { ...chat, id: chat.id };
+
+            dispatch({
+                type: actionTypes.SELECT_CHAT,
+                selectedChat: chat
+            });
+        } else {
+            const chatsRef = firestore.collection('chats');
+            await chatsRef.add({
+                users: [
+                    chat.receiver,
+                    {
+                        uid: user.uid,
+                        name: user.displayName,
+                        phone: user.phoneNumber,
+                        email: user.email,
+                        photoURL: user.photoURL
+                    }
+                ],
+                type: 'single',
+            }).then(response => {
+                const _selectedChat = { ...chat, id: response.id }
+                dispatch({
+                    type: actionTypes.SELECT_CHAT,
+                    selectedChat: _selectedChat
+                });
+            });
+        }
     }
 
     const getUsers = async () => {
@@ -67,13 +68,14 @@ const ChatListComponent = props => {
 
         let users = [];
         snapshot.docs.map(doc => {
-            const user = doc.data();
+            const _user = doc.data();
 
             /// the user won't be able to search themselves
             /// remove the uid check if this is to be allowed
-            if (currentUser.uid !== user.uid && user.name.toLowerCase().includes(query)) {
-                users.push(user);
+            if (user.uid !== _user.uid && _user.name.toLowerCase().includes(query)) {
+                users.push(_user);
             }
+            return null;
         });
         if (users) {
             const chats = users.map(user => {
@@ -82,16 +84,26 @@ const ChatListComponent = props => {
                 };
             });
 
-            setChats(chats);
+            dispatch({
+                type: actionTypes.SET_CHATS,
+                chats: chats
+            });
         }
     }
 
+    const chats = useSelector(state => state.chats);
+    console.log('chat list component', { chats });
     return (
         <div className={classes.ChatListWrapper}>
             <SearchComponent onChange={(e) => inputHandler(e.target.value)} onSearch={searchUser} value={query} />
             <Divider variant='middle' />
 
-            {chatDataComponent}
+            {chats.length > 0 && chats.map(chat => {
+                return (<div className={classes.ChatWrapper}>
+                    <ChatListData onClick={() => selectChat(chat)} user={chat.receiver} />
+                    <Divider variant='middle' />
+                </div>);
+            })}
         </div>
     );
 }
