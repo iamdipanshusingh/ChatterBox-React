@@ -1,4 +1,3 @@
-// import classes from './MessageContainer.modules.scss';
 import Message from '../Message';
 
 const MessageContainer = props => {
