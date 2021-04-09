@@ -91,7 +91,7 @@ const ChatListComponent = props => {
         }
     }
 
-    const chats = useSelector(state => state.chats);
+    const chats = useSelector(state => state.chats, (prev, next) => prev.chats?.length !== next.chats?.length);
     console.log('chat list component', { chats });
     return (
         <div className={classes.ChatListWrapper}>
@@ -99,7 +99,7 @@ const ChatListComponent = props => {
             <Divider variant='middle' />
 
             {chats.length > 0 && chats.map(chat => {
-                return (<div className={classes.ChatWrapper}>
+                return (<div key={chat.id} className={classes.ChatWrapper}>
                     <ChatListData onClick={() => selectChat(chat)} user={chat.receiver} />
                     <Divider variant='middle' />
                 </div>);
