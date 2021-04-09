@@ -4,29 +4,29 @@ import classes from './ChatRoomContainer.module.scss';
 import { useState, useEffect } from 'react';
 
 function ChatRoomContainer (props) {
-    const [width, setWidth] = useState(0);
+    // const [width, setWidth] = useState(0);
 
-    useEffect(() => {
-        const resizeEventListener = () => {
-            const width = window.innerWidth 
-            || document.documentElement.clientWidth 
-            || document.body.clientWidth;
+    // useEffect(() => {
+    //     const resizeEventListener = () => {
+    //         const width = window.innerWidth 
+    //         || document.documentElement.clientWidth 
+    //         || document.body.clientWidth;
 
-            setWidth(width);
-        }
+    //         setWidth(width);
+    //     }
 
-        resizeEventListener();
+    //     resizeEventListener();
 
-        window.addEventListener('resize', resizeEventListener);
+    //     window.addEventListener('resize', resizeEventListener);
 
-        return () => {
-            window.removeEventListener('resize', resizeEventListener);
-        }
-    }, []);
+    //     return () => {
+    //         window.removeEventListener('resize', resizeEventListener);
+    //     }
+    // }, []);
 
     return(
         <div className={classes.ChatRoomContainerWrapper}>
-            {width > 900 && <ChatListComponent/>}
+            {<ChatListComponent/>}
             <ChatRoom/>
         </div>
     );
