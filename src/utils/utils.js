@@ -1,5 +1,6 @@
 import firebase from '../firebase-config';
 import * as actionTypes from '../store/actions';
+import CryptoJS from 'crypto-js';
 
 /// fetch chats collection from firebase
 export const fetchChats = async (dispatch, uid) => {
@@ -26,10 +27,9 @@ export const fetchChats = async (dispatch, uid) => {
         };
 
         chats = [...chats, chat];
+        return null;
     });
 
-    console.log('fetched chats', {receiverChatMap});
-    
     if (chats.length) {
         dispatch({
             type: actionTypes.SET_CHATS,
@@ -41,4 +41,18 @@ export const fetchChats = async (dispatch, uid) => {
             receiverChatMap: receiverChatMap
         });
     }
+}
+
+// Encrypt message
+export const encryptMessage = (message) => {
+    return CryptoJS.AES.encrypt(message, process.env.REACT_APP_EN_SECRET).toString();
+}
+
+// Decrypt message
+export const decryptMessage = (message) => {
+    var _message = CryptoJS.AES.decrypt(message, process.env.REACT_APP_EN_SECRET);
+
+    const text = _message.toString(CryptoJS.enc.Utf8);
+
+    return text;
 }

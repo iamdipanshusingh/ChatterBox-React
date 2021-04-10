@@ -5,7 +5,7 @@ import sendImage from '../../assets/icons/send.png';
 import MessageHeader from './Message/MessageHeader/MessageHeader';
 import { useSelector, useDispatch } from 'react-redux';
 import MessageContainer from './Message/MessageContainer/MessageContainer';
-import {fetchChats} from '../../utils/utils';
+import { fetchChats, encryptMessage } from '../../utils/utils';
 
 function ChatRoom(props) {
     const dispatch = useDispatch();
@@ -26,7 +26,7 @@ function ChatRoom(props) {
     /// fetch chats once the ChatRoom is loaded
     useEffect(() => {
         fetchChats(dispatch);
-    }, []);
+    }, [dispatch]);
 
     let selectedChat = useSelector(state => state.selectedChat, (prev, next) => prev.selectedChat?.id !== next.selectedChat?.id);
     const messagesRef = chatsRef.doc(selectedChat?.id).collection('messages');
@@ -42,13 +42,16 @@ function ChatRoom(props) {
         if (_input.trim() === '') return;
 
         const postChat = async () => {
-            await messagesRef.add({
-                text: _input,
+            const encryptedText = encryptMessage(_input);
+            const data = {
+                text: encryptedText,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 uid,
                 photoURL,
                 chatId: selectedChat?.id,
-            });
+            };
+
+            await messagesRef.add(data);
         }
 
         postChat();

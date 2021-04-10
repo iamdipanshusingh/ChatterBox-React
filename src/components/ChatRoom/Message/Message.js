@@ -1,4 +1,5 @@
 import classes from './Message.module.scss';
+import { decryptMessage } from '../../../utils/utils';
 
 function Message(props) {
     let styles = [classes.MessageDiv];
@@ -7,8 +8,10 @@ function Message(props) {
         styles = [...styles, classes.Sent].join(' ');
     }
 
+    const message = decryptMessage(props.message.text);
+
     return (<div className={styles}>
-        {props.message.text.trim() !== '' ? <p>{props.message.text.trim()}</p> : null}
+        {message.trim() !== '' ? <p>{message.trim()}</p> : null}
     </div>);
 }
 
