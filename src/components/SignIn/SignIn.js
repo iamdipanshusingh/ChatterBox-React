@@ -1,5 +1,7 @@
 import React from 'react';
 import firebase from 'firebase/app';
+import classes from './SignIn.module.scss';
+import GoogleIcon from '../../assets/icons/search.png';
 
 function SignIn(props) {
     const onClick = () => {
@@ -23,9 +25,9 @@ function SignIn(props) {
         });
     }
 
-    return (<>
-        <button onClick={onClick}>Sign in with Google</button>
-    </>);
+    return (<div className={classes.WrapperClass}>
+        <div className={classes.GoogleBtn} onClick={onClick}><img src={GoogleIcon}/> Sign in with Google</div>
+    </div>);
 }
 
 export default SignIn;
