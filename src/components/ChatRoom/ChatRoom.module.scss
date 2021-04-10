@@ -50,7 +50,8 @@ $containerWrapperHeight: 95vh;
     .MessageContainer {
         position: absolute;
         bottom: calc(#{$bottomPosFactor} + #{$formHeight} + 10px);
-        display: grid;
+        display: flex;
+        flex-direction: column-reverse;
         width: $chatAreaWidth;
         padding-bottom: 10px;
 

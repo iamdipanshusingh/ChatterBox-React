@@ -14,7 +14,7 @@ const MessageContainer = props => {
 
     return (
         <div className={classes}>
-            {messages ? messages.map(message => <Message key={message.id} message={message} sent={uid === message.uid} />) : <p>Start the conversation!</p>}
+            {messages ? messages.slice(0).reverse().map(message => <Message key={message.id} message={message} sent={uid === message.uid} />) : <p>Start the conversation!</p>}
         </div>
     );
 }
