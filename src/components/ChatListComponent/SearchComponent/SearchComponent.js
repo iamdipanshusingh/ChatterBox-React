@@ -6,20 +6,20 @@ import classes from './SearchComponent.module.scss';
 const SearchComponent = props => {
     const inputRef = useRef();
 
-    const onEscape = (e) => {
-        if (e.key === 'Escape') {
-            inputRef.current.blur();
-
-            props.onClear();
-        }
-    }
+    const {onClear} = props
 
     useEffect(() => {
+        const onEscape = (e) => {
+            if (e.key === 'Escape') {
+                inputRef.current.blur();
+
+                onClear();
+            }
+        }
+
         window.addEventListener('keydown', onEscape);
-
-
         return (() => window.removeEventListener('keydown', onEscape));
-    }, []);
+    }, [onClear]);
 
     return (
         <div className={classes.SearchComponentWrapper}>
