@@ -3,10 +3,9 @@ import React, { useEffect, useState } from 'react';
 import classes from "./ChatRoom.module.scss";
 import sendImage from '../../assets/icons/send.png';
 import MessageHeader from './Message/MessageHeader/MessageHeader';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import MessageContainer from './Message/MessageContainer/MessageContainer';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
-import * as actionTypes from '../../store/actions';
+import {fetchChats} from '../../utils/utils';
 
 function ChatRoom(props) {
     const dispatch = useDispatch();
@@ -24,44 +23,9 @@ function ChatRoom(props) {
     const user = auth.currentUser;
     const { uid, photoURL } = user;
 
-    /// fetch chats collection from firebase
-    const fetchChats = async () => {
-        const chatsSnapshot = await chatsRef.get();
-
-        let chats = [];
-        let receiverChatMap = {};
-        chatsSnapshot.docs.map((doc) => {
-            let chat = doc.data();
-
-            const { users } = chat;
-
-            const receiver = users.find(_user => _user.uid !== user.uid);
-            chat = { ...chat, id: doc.id, receiver };
-
-            receiverChatMap = {
-                ...receiverChatMap,
-                [receiver.uid]: chat
-            };
-
-            chats = [...chats, chat];
-        });
-
-        if (chats.length) {
-            dispatch({
-                type: actionTypes.SET_CHATS,
-                chats: chats
-            });
-
-            dispatch({
-                type: actionTypes.SET_RECIEVER_CHAT_MAP,
-                receiverChatMap: receiverChatMap
-            });
-        }
-    }
-
     /// fetch chats once the ChatRoom is loaded
     useEffect(() => {
-        fetchChats();
+        fetchChats(dispatch);
     }, []);
 
     let selectedChat = useSelector(state => state.selectedChat, (prev, next) => prev.selectedChat?.id !== next.selectedChat?.id);
