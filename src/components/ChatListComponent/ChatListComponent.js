@@ -2,10 +2,11 @@ import classes from './ChatListComponent.module.scss';
 import SearchComponent from './SearchComponent/SearchComponent';
 import Divider from '@material-ui/core/Divider';
 import ChatListData from './ChatListData/ChatListData';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import firebase from '../../firebase-config';
 import { useDispatch, useSelector } from 'react-redux';
 import * as actionTypes from '../../store/actions';
+import { fetchChats } from '../../utils/utils';
 
 const ChatListComponent = props => {
     const dispatch = useDispatch();
@@ -17,6 +18,14 @@ const ChatListComponent = props => {
 
     const inputHandler = (value) => {
         setQuery(value);
+        const interval = setTimeout(() => {
+            if (value === '')
+                fetchChats(dispatch);
+            else
+                getUsers();
+
+            clearTimeout(interval);
+        }, 1000);
     }
 
     const searchUser = async (event) => {
@@ -103,10 +112,16 @@ const ChatListComponent = props => {
         }
     }
 
+    const onClear = () => {
+        setQuery('');
+
+        fetchChats(dispatch);
+    }
+
     const chats = useSelector(state => state.chats, (prev, next) => prev.chats?.length !== next.chats?.length);
     return (
         <div className={classes.ChatListWrapper}>
-            <SearchComponent onChange={(e) => inputHandler(e.target.value)} onSearch={searchUser} value={query} />
+            <SearchComponent onClear={onClear} onChange={(e) => inputHandler(e.target.value)} onSearch={searchUser} value={query} />
             <Divider variant='middle' />
 
             {chats.length > 0 && chats.map(chat => {
