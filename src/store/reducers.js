@@ -3,7 +3,8 @@ import * as actionTypes from './actions';
 const initialState = {
     users: [],
     selectedChat: {},
-    chats: []
+    chats: [],
+    receiverChatMap: {}
 };
 
 const reducer = (state = initialState, action) => {
@@ -25,6 +26,13 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 chats: [...action.chats]
             }
+
+        case actionTypes.SET_RECIEVER_CHAT_MAP:
+            return {
+                ...state,
+                receiverChatMap: action.receiverChatMap
+            }
+
         default:
             return state;
     }

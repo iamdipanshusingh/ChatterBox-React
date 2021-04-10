@@ -28,8 +28,11 @@ const ChatListComponent = props => {
     const auth = firebase.auth();
     const user = auth.currentUser;
 
+    const receiverChatMap = useSelector(state => state.receiverChatMap);
+
     const selectChat = async (chat) => {
         console.log({ chat });
+        console.log({ receiverChatMap });
 
         if (chat.id) {
             chat = { ...chat, id: chat.id };
@@ -39,26 +42,35 @@ const ChatListComponent = props => {
                 selectedChat: chat
             });
         } else {
-            const chatsRef = firestore.collection('chats');
-            await chatsRef.add({
-                users: [
-                    chat.receiver,
-                    {
-                        uid: user.uid,
-                        name: user.displayName,
-                        phone: user.phoneNumber,
-                        email: user.email,
-                        photoURL: user.photoURL
-                    }
-                ],
-                type: 'single',
-            }).then(response => {
-                const _selectedChat = { ...chat, id: response.id }
+            if (chat.receiver.uid in receiverChatMap) {
+                const _chat = receiverChatMap[chat.receiver.uid];
+
                 dispatch({
                     type: actionTypes.SELECT_CHAT,
-                    selectedChat: _selectedChat
+                    selectedChat: _chat
                 });
-            });
+            } else {
+                const chatsRef = firestore.collection('chats');
+                await chatsRef.add({
+                    users: [
+                        chat.receiver,
+                        {
+                            uid: user.uid,
+                            name: user.displayName,
+                            phone: user.phoneNumber,
+                            email: user.email,
+                            photoURL: user.photoURL
+                        }
+                    ],
+                    type: 'single',
+                }).then(response => {
+                    const _selectedChat = { ...chat, id: response.id }
+                    dispatch({
+                        type: actionTypes.SELECT_CHAT,
+                        selectedChat: _selectedChat
+                    });
+                });
+            }
         }
     }
 
@@ -92,7 +104,6 @@ const ChatListComponent = props => {
     }
 
     const chats = useSelector(state => state.chats, (prev, next) => prev.chats?.length !== next.chats?.length);
-    console.log('chat list component', { chats });
     return (
         <div className={classes.ChatListWrapper}>
             <SearchComponent onChange={(e) => inputHandler(e.target.value)} onSearch={searchUser} value={query} />

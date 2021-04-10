@@ -29,8 +29,8 @@ function ChatRoom(props) {
         const chatsSnapshot = await chatsRef.get();
 
         let chats = [];
+        let receiverChatMap = {};
         chatsSnapshot.docs.map((doc) => {
-            console.log({ doc });
             let chat = doc.data();
 
             const { users } = chat;
@@ -38,15 +38,27 @@ function ChatRoom(props) {
             const receiver = users.find(_user => _user.uid !== user.uid);
             chat = { ...chat, id: doc.id, receiver };
 
+            receiverChatMap = {
+                ...receiverChatMap,
+                [receiver.uid]: chat
+            };
+
             chats = [...chats, chat];
         });
 
-        console.log({ chats });
-        if (chats.length)
+        if (chats.length) {
             dispatch({
                 type: actionTypes.SET_CHATS,
                 chats: chats
             });
+
+            console.log({ receiverChatMap });
+
+            dispatch({
+                type: actionTypes.SET_RECIEVER_CHAT_MAP,
+                receiverChatMap: receiverChatMap
+            });
+        }
     }
 
     /// fetch chats once the ChatRoom is loaded
