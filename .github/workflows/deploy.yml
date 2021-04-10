@@ -1,0 +1,58 @@
+name: Build and Deploy
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - run: npm install
+      
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v1
+        with:
+          envkey_REACT_APP_API_KEY: ${{ secrets.API_KEY }}
+          envkey_REACT_APP_AUTH_DOMAIN: ${{ secrets.AUTH_DOMAIN }}
+          envkey_REACT_APP_PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          envkey_REACT_APP_STORAGE_BUCKET: ${{ secrets.STORAGE_BUCKET }}
+          envkey_REACT_APP_APP_ID: ${{ secrets.APP_ID }}
+          envkey_REACT_APP_MEASUREMENT_ID: ${{ secrets.MEASUREMENT_ID }}
+          envkey_REACT_APP_EN_SECRET: ${{ secrets.EN_SECRET }}
+          file_name: .env
+
+      - run: npm run build
+        env:
+          CI: ""
+      - name: Archive Production Artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: build
+          path: build
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: Download Artifact
+        uses: actions/download-artifact@master
+        with:
+          name: build
+          path: build
+          
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --project=default --only hosting
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
