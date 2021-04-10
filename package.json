@@ -10,6 +10,7 @@
     "@testing-library/jest-dom": "^5.11.10",
     "@testing-library/react": "^11.2.6",
     "@testing-library/user-event": "^12.8.3",
+    "crypto-js": "^4.0.0",
     "dotenv": "^8.2.0",
     "firebase": "^8.3.2",
     "include-media": "^1.4.9",
