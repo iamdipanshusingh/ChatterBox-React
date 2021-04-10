@@ -2,7 +2,7 @@ import classes from './ChatListComponent.module.scss';
 import SearchComponent from './SearchComponent/SearchComponent';
 import Divider from '@material-ui/core/Divider';
 import ChatListData from './ChatListData/ChatListData';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import firebase from '../../firebase-config';
 import { useDispatch, useSelector } from 'react-redux';
 import * as actionTypes from '../../store/actions';
@@ -40,9 +40,6 @@ const ChatListComponent = props => {
     const receiverChatMap = useSelector(state => state.receiverChatMap);
 
     const selectChat = async (chat) => {
-        console.log({ chat });
-        console.log({ receiverChatMap });
-
         if (chat.id) {
             chat = { ...chat, id: chat.id };
 
