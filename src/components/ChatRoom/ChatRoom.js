@@ -52,8 +52,6 @@ function ChatRoom(props) {
                 chats: chats
             });
 
-            console.log({ receiverChatMap });
-
             dispatch({
                 type: actionTypes.SET_RECIEVER_CHAT_MAP,
                 receiverChatMap: receiverChatMap
