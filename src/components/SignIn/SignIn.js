@@ -21,7 +21,7 @@ function SignIn(props) {
                 photoURL: user.photoURL
             };
 
-            usersRef.doc(user.email).set(_user);
+            usersRef.add(_user);
         });
     }
 
