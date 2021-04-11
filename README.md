@@ -1,8 +1,8 @@
-# Chatein
+# ChatterBox
 
-Chatein is a simple chating app. Made for fun.
+ChatterBox is a simple chating app. Made for fun.
 
-Visit [Chatein](https://chatein-cba56.web.app/) to use the app.
+Visit [ChatterBox](https://chatein-cba56.web.app/) to use the app.
 
 ## Features
 - [x] One-to-one chat
