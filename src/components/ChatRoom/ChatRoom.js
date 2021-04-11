@@ -61,17 +61,27 @@ function ChatRoom(props) {
         setInput(value);
     }
 
+    const onSignOut = async () => {
+        await auth.signOut();
+    }
+    
+    const wrapperStyle = [classes.ChatContainerWrapper];
+
+    if (!Object.keys(selectedChat).length) {
+        wrapperStyle.push(classes.Grid);
+    }
+    
     return (
-        <div className={classes.ChatContainerWrapper}>
+        <div className={wrapperStyle.join(' ')}>
+            <MessageHeader onSignOut={onSignOut} user={selectedChat.receiver} />
             {Object.keys(selectedChat).length > 0 ?
                 <React.Fragment>
-                    <MessageHeader user={selectedChat.receiver} />
                     <MessageContainer classes={classes.MessageContainer} uid={uid} chatId={selectedChat.id} />
                     <form className={classes.ChatForm} onSubmit={sendMessage}>
                         <input placeholder="Type here" value={input} onChange={(event) => inputHandler(event.target.value)} />
                         <img onClick={sendMessage} src={sendImage} alt="Send Button" />
                     </form>
-                </React.Fragment> : <p className={classes.NoChatSelected}>Start chatting with your loved ones</p>
+                </React.Fragment> : <p>Start chatting with your loved ones</p>
             }
         </div>
     );

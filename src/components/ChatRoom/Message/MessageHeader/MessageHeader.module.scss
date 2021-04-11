@@ -24,3 +24,15 @@
         }
     }
 }
+
+.IconWrapper {
+    width: 100%;
+    
+    .SignOutBtn {
+        width: 20px;
+        float: right;
+        margin-right: 10px;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+}
