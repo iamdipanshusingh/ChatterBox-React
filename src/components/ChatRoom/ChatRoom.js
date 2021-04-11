@@ -63,7 +63,7 @@ function ChatRoom(props) {
 
     return (
         <div className={classes.ChatContainerWrapper}>
-            {Object.keys(selectedChat).length > 0 &&
+            {Object.keys(selectedChat).length > 0 ?
                 <React.Fragment>
                     <MessageHeader user={selectedChat.receiver} />
                     <MessageContainer classes={classes.MessageContainer} uid={uid} chatId={selectedChat.id} />
@@ -71,7 +71,7 @@ function ChatRoom(props) {
                         <input placeholder="Type here" value={input} onChange={(event) => inputHandler(event.target.value)} />
                         <img onClick={sendMessage} src={sendImage} alt="Send Button" />
                     </form>
-                </React.Fragment>
+                </React.Fragment> : <p className={classes.NoChatSelected}>Start Chatein with your loved ones</p>
             }
         </div>
     );

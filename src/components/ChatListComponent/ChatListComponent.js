@@ -121,12 +121,12 @@ const ChatListComponent = props => {
             <SearchComponent onClear={onClear} onChange={(e) => inputHandler(e.target.value)} onSearch={searchUser} value={query} />
             <Divider variant='middle' />
 
-            {chats.length > 0 && chats.map(chat => {
+            {chats.length > 0 ? chats.map(chat => {
                 return (<div key={chat.id} className={classes.ChatWrapper}>
                     <ChatListData onClick={() => selectChat(chat)} user={chat.receiver} />
                     <Divider variant='middle' />
                 </div>);
-            })}
+            }) : <p className="EmptyStateText">No chats or users found!</p>}
         </div>
     );
 }
