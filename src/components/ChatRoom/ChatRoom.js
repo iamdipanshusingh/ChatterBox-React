@@ -71,7 +71,7 @@ function ChatRoom(props) {
                         <input placeholder="Type here" value={input} onChange={(event) => inputHandler(event.target.value)} />
                         <img onClick={sendMessage} src={sendImage} alt="Send Button" />
                     </form>
-                </React.Fragment> : <p className={classes.NoChatSelected}>Start Chatein with your loved ones</p>
+                </React.Fragment> : <p className={classes.NoChatSelected}>Start chatting with your loved ones</p>
             }
         </div>
     );

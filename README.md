@@ -2,7 +2,7 @@
 
 ChatterBox is a simple chating app. Made for fun.
 
-Visit [ChatterBox](https://chatein-cba56.web.app/) to use the app.
+Visit [ChatterBox](https://boxchatter.web.app/) to use the app.
 
 ## Features
 - [x] One-to-one chat
@@ -21,7 +21,7 @@ Visit [ChatterBox](https://chatein-cba56.web.app/) to use the app.
 - Fork the repo
 - Clone your forked repo
 ```
-git clone git@github.com:<github_username>/Chatein-React.git
+git clone git@github.com:<github_username>/ChatterBox-React.git
 ```
 
 ### Step 2 - Configure Firebase project
